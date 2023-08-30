@@ -61,32 +61,6 @@ void uart2_rxtx_init(void)
 }
 
 
-
-void uart2_tx_init(void)
-{
-	/***Clock access to GPIOA***/
-	RCC -> AHBENR   |=  GPIOAEN;
-
-	/**Alternate function mode***/
-	GPIOA -> MODER  &=~ (1U << 4);
-	GPIOA -> MODER  |=  (1U << 5);
-
-	/*AF1 function*/
-	GPIOA -> AFR[0] |=  (1U << 8);
-	GPIOA -> AFR[0] &=~ (1U << 9);
-	GPIOA -> AFR[0] &=~ (1U << 10);
-	GPIOA -> AFR[0] &=~ (1U << 11);
-
-	RCC -> APB1ENR  |=  UART2EN;
-
-	uart_set_baudrate(USART2 , APB1_CLK , UART_BAUDRATE);
-
-	USART2 -> CR1   =   CR1_TE;
-
-	USART2 -> CR1  |=   CR1_UE;
-}
-
-
 char uart2_read(void)
 {
 	while(!(USART2 -> ISR & ISR_RXNE)){}
