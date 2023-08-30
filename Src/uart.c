@@ -12,7 +12,7 @@
 
 #define CR1_UE 			(1U << 0)
 #define ISR_TXE 		(1U << 7)
-#define ISR_RXNE		(1U << 5)
+
 
 #define CR1_RXNEIE		(1U << 5)
 
@@ -29,7 +29,7 @@ int __io_putchar(int ch)
 	return ch;
 }
 
-void uart2_rxtx_interrupt_init(void)
+void uart2_rx_interrupt_init(void)
 {
 	/***Clock access to GPIOA***/
 	RCC -> AHBENR   |=  GPIOAEN;
@@ -58,6 +58,12 @@ void uart2_rxtx_interrupt_init(void)
 	uart_set_baudrate(USART2 , APB1_CLK , UART_BAUDRATE);
 
 	USART2 -> CR1   =   (CR1_TE | CR1_RE);
+
+	/*Enable RXNEIE interrupt*/
+	USART2 -> CR1   |= 	CR1_RXNEIE;
+
+	/*Enable UART2 Interrupt in NVIC*/
+	NVIC_EnableIRQ(USART2_IRQn);
 
 	USART2 -> CR1  |=   CR1_UE;
 }
